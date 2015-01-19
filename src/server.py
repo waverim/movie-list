@@ -26,8 +26,25 @@ class Index(tornado.web.RequestHandler):
             self.write(' ' + data["title"] + ' </a></p>')
             self.write('<p style="text-indent: 2em;">Coming date: ' + data["date"]+ '</p>')
 
+
+class Nowplaying(tornado.web.RequestHandler):
+    def get(self):
+        arr = nowplaying.get_nowplaying()
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(arr))
+
+
+class Upcoming(tornado.web.RequestHandler):
+    def get(self):
+        arr = upcoming.get_upcoming()
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(arr))
+
+            
 application = tornado.web.Application([
     (r"/", Index),
+    (r"/nowplaying", Nowplaying),
+    (r"/upcoming", Upcoming),
 ])
 
 if __name__ == "__main__":

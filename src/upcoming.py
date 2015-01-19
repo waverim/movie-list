@@ -22,6 +22,6 @@ def get_upcoming():
 
         obj['title'] = movie_json['title']
         
-        arr.append(json.dumps(obj))
+        arr.append(obj)
 
     return arr

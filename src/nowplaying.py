@@ -16,6 +16,6 @@ def get_nowplaying():
         obj['title'] = tag['data-title']
         obj['score'] = tag['data-score']
         obj['actors'] = tag['data-actors']
-        arr.append(json.dumps(obj))
+        arr.append(obj)
 
     return arr
