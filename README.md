@@ -10,7 +10,7 @@
 
 ## Run
 
-    python src/server.py
+    $ python src/server.py
       
 
 ## Data Sources
