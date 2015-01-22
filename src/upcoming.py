@@ -16,8 +16,7 @@ def get_upcoming():
         obj['id'] = re.findall(r'[\d]+', tag.a['href'])[0]
         obj['date'] = tag.li.string
 
-        movie_string = urllib2.urlopen('http://api.douban.com/v2/movie/subject/' + obj['id']).read()
-        
+        movie_string = urllib2.urlopen('http://api.douban.com/v2/movie/subject/' + obj['id']).read()        
         movie_json = json.loads(movie_string)
 
         obj['title'] = movie_json['title']
