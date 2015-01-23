@@ -22,8 +22,8 @@ class Upcoming(tornado.web.RequestHandler):
         arr = upcoming.get_upcoming()
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(arr))
-
-            
+        
+        
 application = tornado.web.Application([
     (r"/", Index),
     (r"/nowplaying", Nowplaying),

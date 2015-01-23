@@ -3,24 +3,27 @@ import json
 import re
 from bs4 import BeautifulSoup
 
+import gevent
+import gevent.monkey
+
 def get_upcoming():
     response = urllib2.urlopen('http://movie.douban.com/later/wuhan/')
     html_string = response.read()
 
     soup = BeautifulSoup(html_string)
-    upcoming =  soup.find_all(attrs={"class": "intro"})
+    upcoming = soup.find_all(attrs={"class": "intro"})
     
-    arr = []
-    for tag in upcoming:
-        obj = {}
-        obj['id'] = re.findall(r'[\d]+', tag.a['href'])[0]
-        obj['date'] = tag.li.string
+    id_list = [re.findall(r'[\d]+', item.a['href'])[0] for item in upcoming]
+    
+    detail_list = [gevent.spawn(get_movie_detail, item) for item in id_list]
+    gevent.joinall(detail_list)
 
-        movie_string = urllib2.urlopen('http://api.douban.com/v2/movie/subject/' + obj['id']).read()        
-        movie_json = json.loads(movie_string)
+    for index, item in enumerate(detail_list):
+        detail_list[index] = item.value
+    #result = [i.value for i in detail_list]
+    return result
 
-        obj['title'] = movie_json['title']
-        
-        arr.append(obj)
-
-    return arr
+def get_movie_detail(movie_id):
+    movie_string = urllib2.urlopen('http://api.douban.com/v2/movie/subject/' + movie_id).read()
+    movie_json = json.loads(movie_string)
+    return movie_json
