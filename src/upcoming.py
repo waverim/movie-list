@@ -7,11 +7,9 @@ import gevent
 import gevent.monkey
 
 def get_upcoming():
-    response = urllib2.urlopen('http://movie.douban.com/later/wuhan/')
-    html_string = response.read()
+    html_string = urllib2.urlopen('http://movie.douban.com/later/wuhan/').read()
 
-    soup = BeautifulSoup(html_string)
-    upcoming = soup.find_all(attrs={"class": "intro"})
+    upcoming = BeautifulSoup(html_string).find_all(attrs={"class": "intro"})
     
     id_list = [re.findall(r'[\d]+', item.a['href'])[0] for item in upcoming]
     
@@ -20,8 +18,8 @@ def get_upcoming():
 
     for index, item in enumerate(detail_list):
         detail_list[index] = item.value
-    #result = [i.value for i in detail_list]
-    return result
+    
+    return detail_list
 
 def get_movie_detail(movie_id):
     movie_string = urllib2.urlopen('http://api.douban.com/v2/movie/subject/' + movie_id).read()
