@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-  
+
 import urllib2
 import json
 from bs4 import BeautifulSoup
@@ -28,12 +30,15 @@ def update_database():
     cursor.execute("use test")
     
     arr = get_nowplaying()
-
+    
     for item in arr:
         try:
-            cursor.execute("insert into nowplaying values (int(item['id']), item['title'], float(item['score']), item['actors'])")
+            m_id = int(item['id'])
+            cursor.execute("insert into movie values ('%d', '%d')" % (m_id, 1))
             conn.commit()
         except:
             conn.rollback()
 
     conn.close()
+
+update_database()    
