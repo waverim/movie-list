@@ -24,17 +24,32 @@ def get_nowplaying():
     return arr
 
 def update_database():
-    conn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='', \
+    conn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='anna', \
                            port=3306, charset='utf8')
     cursor = conn.cursor()
     cursor.execute("use test")
     
     arr = get_nowplaying()
+
+    current_id_list = [int(item['id']) for item in arr]
+
+    cursor.execute("select movie_id from movie where movie_type='1'")
+    old_id_list = [i[0] for i in cursor.fetchall()]
+
+    should_delete_id_list = list(set(old_id_list) - set(current_id_list))
+
+    print should_delete_id_list
     
+    for item in should_delete_id_list:
+        try:
+            cursor.execute("delete from movie where movie_id = %d" % (item))
+            conn.commit()
+        except:
+            conn.rollback()
+
     for item in arr:
         try:
-            m_id = int(item['id'])
-            cursor.execute("insert into movie values ('%d', '%d')" % (m_id, 1))
+            cursor.execute("insert ignore into movie values ('%d', '%d', '%s')" % (int(item['id']), 1, item['title']))
             conn.commit()
         except:
             conn.rollback()
